@@ -284,7 +284,7 @@ function my_eval(in_sexpr, env) {
       return val
     }
     else if (sexpr.value[0].value == "let") {
-      if (sexpr.value[1].type == SYMBOL) {
+      if (sexpr.value.length == 4 && sexpr.value[1].type == SYMBOL) {
         if (find_in_env(sexpr.value[1].value, env).type != ERROR) {
           return {type: ERROR, value: `${sexpr.value[1].value} is already defined`}
         }
@@ -512,6 +512,42 @@ function foldl(sexpr) {
   }
   return foldl({type: LIST, value: [sexpr.value[0], sexpr.value[0].value({type: LIST, value: [sexpr.value[1], first(wrap(sexpr.value[2]))]}), rest(wrap(sexpr.value[2]))] })
 }
+
+function cos(sexpr) {
+  return {type: NUM, value: Math.cos(sexpr.value[0].value)}
+}
+
+function sin(sexpr) {
+  return {type: NUM, value: Math.sin(sexpr.value[0].value)}
+}
+
+function tan(sexpr) {
+  return {type: NUM, value: Math.tan(sexpr.value[0].value)}
+}
+
+function log(sexpr) {
+  return {type: NUM, value: Math.log10(sexpr.value[0].value)}
+}
+
+function ln(sexpr) {
+  return {type: NUM, value: Math.log(sexpr.value[0].value)}
+}
+
+function round(sexpr) {
+  return {type: NUM, value: Math.round(sexpr.value[0].value)}
+}
+
+function ceil(sexpr) {
+  return {type: NUM, value: Math.ceil(sexpr.value[0].value)}
+}
+
+function floor(sexpr) {
+  return {type: NUM, value: Math.floor(sexpr.value[0].value)}
+}
+
+
+
+
 /*
 
 
@@ -598,6 +634,18 @@ const env = [
     {type: "func", symbol: "list", value: list, args: ["any", "..."]},
     {type: "func", symbol: "func", value: ()=>[], args: ["list", "any"]},
     {type: "func", symbol: "foldl", value: foldl, args: [FUNC, ANY, LIST]},
+    {type: "func", symbol: "sin", value: sin, args: [NUM]},
+    {type: "func", symbol: "cos", value: cos, args: [NUM]},
+    {type: "func", symbol: "tan", value: tan, args: [NUM]},
+    {type: "func", symbol: "log", value: log, args: [NUM]},
+    {type: "func", symbol: "ln", value: ln, args: [NUM]},
+
+    {type: "func", symbol: "round", value: round, args: [NUM]},
+    {type: "func", symbol: "ceil", value: ceil, args: [NUM]},
+    {type: "func", symbol: "floor", value: floor, args: [NUM]},
+    {type: "func", symbol: "clear", value: (nil) => {clear = true; return []}, args: []},
+    {type: "func", symbol: "set!", value: define, args: ["symbol", "any"]},
+    {type: "func", symbol: "del!", value: del, args: ["any"]},
     {type: "number", symbol: "e", value: Math.E},
     {type: "number", symbol: "pi", value: Math.PI},
     {type: "list", symbol: "_", value: []},
@@ -617,6 +665,30 @@ const env = [
     */
 
 ]
+ 
+  function define(sexpr) {
+    console.log("define",sexpr)
+    if (sexpr.value[1].type == "func") {
+        if ("render" in sexpr.value[1]) {
+          env.push({type: "func", symbol: sexpr.value[0].value, value: sexpr.value[1].value, args: sexpr.value[1].args, render: sexpr.value[1].render})
+        }
+        else {
+          env.push({type: "func", symbol: sexpr.value[0].value, value: sexpr.value[1].value, args: sexpr.value[1].args})
+        }
+    }
+    else {
+      env.push({type: sexpr.value[1].type, symbol: sexpr.value[0].value, value: sexpr.value[1].value})
+    }
+    console.log("env", env)
+  }
+
+  function del(sexpr) {
+    console.log("DEL ARG", sexpr, sexpr.value[0].symbol)
+    const i = env.findIndex((v) => v.symbol == sexpr.value[0].symbol)
+    const out = env.splice(i, 1)[0]
+    console.log("DEL", out)
+    return copy_sexpr(out)
+  }
  
 let clear = false
 
@@ -645,33 +717,7 @@ function run(e, history, setHistory) {
   
   setHistory(updated)
 
-  function define(sexpr) {
-    console.log("define",sexpr)
-    if (sexpr.value[1].type == "func") {
-        if ("render" in sexpr.value[1]) {
-          env.push({type: "func", symbol: sexpr.value[0].value, value: sexpr.value[1].value, args: sexpr.value[1].args, render: sexpr.value[1].render})
-        }
-        else {
-          env.push({type: "func", symbol: sexpr.value[0].value, value: sexpr.value[1].value, args: sexpr.value[1].args})
-        }
-    }
-    else {
-      env.push({type: sexpr.value[1].type, symbol: sexpr.value[0].value, value: sexpr.value[1].value})
-    }
-    console.log("env", env)
-  }
-
-  function del(sexpr) {
-    console.log("DEL ARG", sexpr, sexpr.value[0].symbol)
-    const i = env.findIndex((v) => v.symbol == sexpr.value[0].symbol)
-    const out = env.splice(i, 1)[0]
-    console.log("DEL", out)
-    return copy_sexpr(out)
-  }
-  env.push({type: "func", symbol: "clear", value: (nil) => {clear = true; return []}, args: []})
-  env.push({type: "func", symbol: "set!", value: define, args: ["symbol", "any"]})
-  env.push({type: "func", symbol: "del!", value: del, args: ["any"]})
-  const sexpr_out = my_eval(sexpr, env)
+ const sexpr_out = my_eval(sexpr, env)
   const res = {item: sexpr_to_jsx(sexpr_out), key: len + 1, entry: false} 
   setHistory([...updated, res])
   e.target.text.value = ""
