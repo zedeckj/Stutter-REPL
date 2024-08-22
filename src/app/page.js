@@ -548,6 +548,34 @@ function floor(sexpr) {
 
 
 
+function max(sexpr) {
+  return {type: NUM, value: Math.max(...sexpr.value.map((s) => s.value))}
+}
+
+function min(sexpr) {
+  return {type: NUM, value: Math.min(...sexpr.value.map((s) => s.value))}
+}
+
+function gt(sexpr) {
+  return {type: BOOL, value: sexpr.value[0].value > sexpr.value[1].value}
+}
+
+function gte(sexpr) {
+  return {type: BOOL, value: sexpr.value[0].value >= sexpr.value[1].value}
+}
+function lt(sexpr) {
+  return {type: BOOL, value: sexpr.value[0].value < sexpr.value[1].value}
+}
+function lte(sexpr) {
+  return {type: BOOL, value: sexpr.value[0].value <= sexpr.value[1].value}
+}
+
+function eq(sexpr) {
+  return {type: BOOL, value: sexpr.value[0].value == sexpr.value[1].value}
+}
+
+
+
 /*
 
 
@@ -640,6 +668,14 @@ const env = [
     {type: "func", symbol: "log", value: log, args: [NUM]},
     {type: "func", symbol: "ln", value: ln, args: [NUM]},
 
+    {type: "func", symbol: "<", value: lt, args: [NUM, NUM]},
+    {type: "func", symbol: "<=", value: lte, args: [NUM, NUM]},
+    {type: "func", symbol: ">", value: gt, args: [NUM, NUM]},
+    {type: "func", symbol: ">=", value: gte, args: [NUM, NUM]},
+    {type: "func", symbol: "=", value: eq, args: [NUM. NUM]},
+
+    {type: "func", symbol: "max", value: max, args: [NUM, NUM, "..."]},
+      
     {type: "func", symbol: "round", value: round, args: [NUM]},
     {type: "func", symbol: "ceil", value: ceil, args: [NUM]},
     {type: "func", symbol: "floor", value: floor, args: [NUM]},
