@@ -1,7 +1,7 @@
 [Try the REPL](https://stutter.vercel.app/)
 
 ## Stutter
-Stutter is a LISP inspired toy language. Valid expressions in Stuter are either Atoms (which are either numbers or booleans), Lists, and Function calls.
+Stutter is a LISP inspired toy language. Valid expressions in Stuter are either Atoms (which are either numbers, booleans, or functions), Lists, and Function calls.
 
 Examples:
 
