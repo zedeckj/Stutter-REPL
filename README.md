@@ -1,12 +1,12 @@
 [Try the REPL](https://stutter.vercel.app/)
 
 ## Stutter
-Stutter is a LISP inspired toy language. Valid expressions in Stuter are either Atoms (which are either numbers or booleans), Lists, and Function calls.
+Stutter is a LISP inspired toy language I made over a weekend. Valid expressions in Stuter are either Atoms (which are either numbers or booleans), Lists, and Function calls.
 
 Examples:
 
 Atoms:
-```
+``` racket
 > 2
 2
 > true
@@ -16,7 +16,7 @@ false
 ```
 
 Function Calls:
-```
+``` racket
 > (add1 1)
 2
 > (* 2 3 4)
@@ -26,7 +26,7 @@ Function Calls:
 ```
 
 Lists:
-```
+``` racket
 >[1 2 3]
 [1 2 3]
 >(list 4 5)
@@ -34,10 +34,16 @@ Lists:
 ```
 
 Functions can be defined in the form of 
-(func <argument list> <body>)
+`(func <argument list> <body>)`
 
 Examples
-```
+``` racket
 (func [x y z] (+ x y z))
 (func [a b] (* a (+ a b)))
+```
+
+Built-in Functions include:
+```
++, /, *, -, first, rest, add1, map, let, if, and, and, or, list, func,  
+foldl, sin, cos, tan, log, ln, <, <=, >, >=, =, max, round, ceil, floor, clear, set!, del!,
 ```
